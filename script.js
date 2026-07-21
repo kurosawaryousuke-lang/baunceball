@@ -33,10 +33,34 @@ function shoot() {
 }
 
 function update() {
-    if (moving) {
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+
+    if (!moving) return;
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    // 左右の壁
+    if (ball.x - ball.r <= 0) {
+        ball.x = ball.r;
+        ball.vx *= -1;
     }
+
+    if (ball.x + ball.r >= canvas.width) {
+        ball.x = canvas.width - ball.r;
+        ball.vx *= -1;
+    }
+
+    // 上下の壁
+    if (ball.y - ball.r <= 0) {
+        ball.y = ball.r;
+        ball.vy *= -1;
+    }
+
+    if (ball.y + ball.r >= canvas.height) {
+        ball.y = canvas.height - ball.r;
+        ball.vy *= -1;
+    }
+
 }
 
 function draw() {
@@ -90,11 +114,11 @@ document.addEventListener("keydown", function (e) {
         }
 
     }
-
-    // スペースキー
-    if (e.key === " ") {
-        shoot();
-    }
+// スペースキー
+if (e.code === "Space") {
+    alert("Spaceが押された！");
+    shoot();
+}
 
     // Rキー
     if (e.key === "r" || e.key === "R") {
