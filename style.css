@@ -1,15 +1,32 @@
 body{
     margin:0;
-    background:#f0f0f0;
-    text-align:center;
+    background:#e8f4ff;
     font-family:sans-serif;
+    text-align:center;
 }
 
 h1{
-    margin-top:20px;
+    margin:20px 0 10px;
+}
+
+#ui{
+    width:900px;
+    margin:0 auto 10px;
+    display:flex;
+    justify-content:space-between;
+    font-size:22px;
+    font-weight:bold;
 }
 
 canvas{
     background:white;
-    border:3px solid black;
+    border:4px solid #222;
+    border-radius:12px;
+    display:block;
+    margin:auto;
+}
+
+#help{
+    margin-top:15px;
+    font-size:18px;
 }

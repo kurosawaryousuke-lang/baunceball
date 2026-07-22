@@ -1,77 +1,105 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-// ボール
-const ball = {
-    x: 100,
-    y: 300,
-    r: 10,
-    vx: 0,
-    vy: 0
+// ===== ステージ =====
+const stage = {
+    start: { x: 100, y: 300 },
+    goal: { x: 820, y: 300, r: 20 }
 };
 
+// ===== ボール =====
+const ball = {
+    x: stage.start.x,
+    y: stage.start.y,
+    r: 10,
+    vx: 0,
+    vy: 0,
+    moving: false
+};
+
+// ===== 操作 =====
 let angle = 0;
 let power = 8;
-let moving = false;
 
-// 初期位置に戻す
+// ===== リセット =====
 function resetBall() {
-    ball.x = 100;
-    ball.y = 300;
+    ball.x = stage.start.x;
+    ball.y = stage.start.y;
     ball.vx = 0;
     ball.vy = 0;
-    moving = false;
+    ball.moving = false;
 }
 
-// 発射
+// ===== 発射 =====
 function shoot() {
 
-    if (moving) return;
+    if (ball.moving) return;
 
     const rad = angle * Math.PI / 180;
 
     ball.vx = Math.cos(rad) * power;
     ball.vy = -Math.sin(rad) * power;
 
-    moving = true;
+    ball.moving = true;
 }
 
-// 更新
+// ===== 更新 =====
 function update() {
 
-    if (!moving) return;
+    if (!ball.moving) return;
 
     ball.x += ball.vx;
     ball.y += ball.vy;
 
-    // 左右の壁
-    if (ball.x - ball.r <= 0) {
+    // 左右反射
+    if (ball.x - ball.r < 0) {
         ball.x = ball.r;
-        ball.vx = -ball.vx;
+        ball.vx *= -1;
     }
 
-    if (ball.x + ball.r >= canvas.width) {
+    if (ball.x + ball.r > canvas.width) {
         ball.x = canvas.width - ball.r;
-        ball.vx = -ball.vx;
+        ball.vx *= -1;
     }
 
-    // 上下の壁
-    if (ball.y - ball.r <= 0) {
+    // 上下反射
+    if (ball.y - ball.r < 0) {
         ball.y = ball.r;
-        ball.vy = -ball.vy;
+        ball.vy *= -1;
     }
 
-    if (ball.y + ball.r >= canvas.height) {
+    if (ball.y + ball.r > canvas.height) {
         ball.y = canvas.height - ball.r;
-        ball.vy = -ball.vy;
+        ball.vy *= -1;
+    }
+
+    // ゴール判定
+    const dx = ball.x - stage.goal.x;
+    const dy = ball.y - stage.goal.y;
+
+    if (Math.sqrt(dx * dx + dy * dy) < ball.r + stage.goal.r) {
+
+        alert("Stage Clear!");
+
+        resetBall();
+
     }
 
 }
-
-// 描画
+// ===== 描画 =====
 function draw() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 背景
+    ctx.fillStyle = "#dff6ff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // ゴール
+    ctx.beginPath();
+    ctx.arc(stage.goal.x, stage.goal.y, stage.goal.r, 0, Math.PI * 2);
+    ctx.fillStyle = "limegreen";
+    ctx.fill();
 
     // ボール
     ctx.beginPath();
@@ -80,7 +108,7 @@ function draw() {
     ctx.fill();
 
     // 照準
-    if (!moving) {
+    if (!ball.moving) {
 
         const rad = angle * Math.PI / 180;
 
@@ -90,48 +118,45 @@ function draw() {
             ball.x + Math.cos(rad) * 60,
             ball.y - Math.sin(rad) * 60
         );
+
         ctx.strokeStyle = "red";
         ctx.lineWidth = 3;
         ctx.stroke();
-
     }
 
-    // 情報
+    // UI
     ctx.fillStyle = "black";
     ctx.font = "20px sans-serif";
-    ctx.fillText("角度: " + angle + "°", 20, 30);
-    ctx.fillText("パワー: " + power, 20, 60);
-
+    ctx.fillText("角度 : " + angle + "°", 20, 30);
+    ctx.fillText("パワー : " + power, 20, 60);
 }
 
-// メインループ
+// ===== メインループ =====
 function gameLoop() {
-
     update();
     draw();
-
     requestAnimationFrame(gameLoop);
-
 }
 
 gameLoop();
 
-// キー操作
-document.addEventListener("keydown", function (e) {
+// ===== キー操作 =====
+document.addEventListener("keydown", (e) => {
 
-    if (!moving) {
+    if (!ball.moving) {
 
         if (e.key === "ArrowLeft") angle -= 5;
         if (e.key === "ArrowRight") angle += 5;
+
         if (e.key === "ArrowUp") power++;
+
         if (e.key === "ArrowDown") {
             power--;
             if (power < 1) power = 1;
         }
-
     }
 
-    if (e.code === "Space") {
+    if (e.code === "Space") {       e.preventDefault();
         shoot();
     }
 
