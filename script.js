@@ -89,6 +89,8 @@ function update() {
 // ===== 描画 =====
 function draw() {
 
+    console.log("draw");
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 背景
