@@ -1,18 +1,14 @@
-const stages = [
-{
-    start:{x:100,y:300},
-    goal:{x:800,y:300},
-
-    walls:[],
-
-    spikes:[],
-
-    stars:[],
-
-    warps:[],
-
-    reverse:[]
-}
+const walls = [
+    {
+        x: 300,
+        y: 150,
+        w: 30,
+        h: 250
+    },
+    {
+        x: 550,
+        y: 0,
+        w: 30,
+        h: 250
+    }
 ];
-
-let currentStage=0;

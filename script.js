@@ -51,6 +51,25 @@ function update() {
     ball.x += ball.vx;
     ball.y += ball.vy;
 
+    // 壁との当たり判定
+for (const wall of walls) {
+
+    if (
+        ball.x + ball.r > wall.x &&
+        ball.x - ball.r < wall.x + wall.w &&
+        ball.y + ball.r > wall.y &&
+        ball.y - ball.r < wall.y + wall.h
+    ) {
+        ball.vx *= -1;
+        ball.vy *= -1;
+
+        // めり込み防止
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+    }
+
+}
+
     // 左右反射
     if (ball.x - ball.r < 0) {
         ball.x = ball.r;
@@ -90,7 +109,7 @@ function update() {
 function draw() {
 
     console.log("draw");
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 背景
@@ -102,6 +121,13 @@ function draw() {
     ctx.arc(stage.goal.x, stage.goal.y, stage.goal.r, 0, Math.PI * 2);
     ctx.fillStyle = "limegreen";
     ctx.fill();
+
+    // 壁
+ctx.fillStyle = "#2b6cff";
+
+for (const wall of walls) {
+    ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+}
 
     // ボール
     ctx.beginPath();
