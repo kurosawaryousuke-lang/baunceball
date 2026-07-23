@@ -52,6 +52,7 @@ function update() {
     ball.y += ball.vy;
 
     // 壁との当たり判定
+// ===== 壁との当たり判定 =====
 for (const wall of walls) {
 
     if (
@@ -60,16 +61,44 @@ for (const wall of walls) {
         ball.y + ball.r > wall.y &&
         ball.y - ball.r < wall.y + wall.h
     ) {
-        ball.vx *= -1;
-        ball.vy *= -1;
 
-        // めり込み防止
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+        // 左右どちらから当たったか
+        const overlapLeft = (ball.x + ball.r) - wall.x;
+        const overlapRight = (wall.x + wall.w) - (ball.x - ball.r);
+
+        // 上下どちらから当たったか
+        const overlapTop = (ball.y + ball.r) - wall.y;
+        const overlapBottom = (wall.y + wall.h) - (ball.y - ball.r);
+
+        const minOverlap = Math.min(
+            overlapLeft,
+            overlapRight,
+            overlapTop,
+            overlapBottom
+        );
+
+        if (minOverlap === overlapLeft) {
+            ball.x = wall.x - ball.r;
+            ball.vx *= -1;
+        }
+
+        else if (minOverlap === overlapRight) {
+            ball.x = wall.x + wall.w + ball.r;
+            ball.vx *= -1;
+        }
+
+        else if (minOverlap === overlapTop) {
+            ball.y = wall.y - ball.r;
+            ball.vy *= -1;
+        }
+
+        else {
+            ball.y = wall.y + wall.h + ball.r;
+            ball.vy *= -1;
+        }
+
     }
-
 }
-
     // 左右反射
     if (ball.x - ball.r < 0) {
         ball.x = ball.r;
