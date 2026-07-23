@@ -4,9 +4,28 @@ const ctx = canvas.getContext("2d");
 // ===== ステージ =====
 const stage = {
     start: { x: 100, y: 300 },
-    goal: { x: 820, y: 300, r: 20 }
-};
 
+    goal: { x: 820, y: 300, r: 20 },
+
+    stars: [
+        { x: 200, y: 100, got: false },
+        { x: 700, y: 500, got: false }
+    ]
+};
+// 星
+ctx.fillStyle = "gold";
+
+for (const star of stage.stars) {
+
+    if (!star.got) {
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+    }
+
+}
 // ===== ボール =====
 const ball = {
     x: stage.start.x,
@@ -47,9 +66,15 @@ function shoot() {
 function update() {
 
     if (!ball.moving) return;
+const steps = Math.ceil(Math.max(Math.abs(ball.vx), Math.abs(ball.vy)));
 
-    ball.x += ball.vx;
-    ball.y += ball.vy;
+const stepX = ball.vx / steps;
+const stepY = ball.vy / steps;
+
+for (let i = 0; i < steps; i++) {
+
+    ball.x += stepX;
+    ball.y += stepY;
 
     // 壁との当たり判定
 // ===== 壁との当たり判定 =====
@@ -133,6 +158,7 @@ for (const wall of walls) {
 
     }
 
+}
 }
 // ===== 描画 =====
 function draw() {
