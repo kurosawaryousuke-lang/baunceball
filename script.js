@@ -202,10 +202,19 @@ document.addEventListener("keydown", (e) => {
 
     if (!ball.moving) {
 
-        if (e.key === "ArrowLeft") angle -= 5;
-        if (e.key === "ArrowRight") angle += 5;
+        if (e.key === "ArrowLeft") {
+    angle -= 5;
+    if (angle < 0) angle = 355;
+}
+        if (e.key === "ArrowRight") {
+    angle += 5;
+    if (angle >= 360) angle = 0;
+}
 
-        if (e.key === "ArrowUp") power++;
+        if (e.key === "ArrowUp") {
+    power++;
+    if (power > 100) power = 100;
+}
 
         if (e.key === "ArrowDown") {
             power--;
