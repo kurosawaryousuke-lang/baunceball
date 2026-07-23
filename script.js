@@ -66,99 +66,93 @@ function shoot() {
 function update() {
 
     if (!ball.moving) return;
-const steps = Math.ceil(Math.max(Math.abs(ball.vx), Math.abs(ball.vy)));
 
-const stepX = ball.vx / steps;
-const stepY = ball.vy / steps;
+    const steps = Math.ceil(
+        Math.max(Math.abs(ball.vx), Math.abs(ball.vy))
+    );
 
-for (let i = 0; i < steps; i++) {
+    const stepX = ball.vx / steps;
+    const stepY = ball.vy / steps;
 
-    ball.x += stepX;
-    ball.y += stepY;
+    for (let i = 0; i < steps; i++) {
 
-    // 壁との当たり判定
-// ===== 壁との当たり判定 =====
-for (const wall of walls) {
+        ball.x += stepX;
+        ball.y += stepY;
 
-    if (
-        ball.x + ball.r > wall.x &&
-        ball.x - ball.r < wall.x + wall.w &&
-        ball.y + ball.r > wall.y &&
-        ball.y - ball.r < wall.y + wall.h
-    ) {
+        // ===== 壁との当たり判定 =====
+        for (const wall of walls) {
 
-        // 左右どちらから当たったか
-        const overlapLeft = (ball.x + ball.r) - wall.x;
-        const overlapRight = (wall.x + wall.w) - (ball.x - ball.r);
+            if (
+                ball.x + ball.r > wall.x &&
+                ball.x - ball.r < wall.x + wall.w &&
+                ball.y + ball.r > wall.y &&
+                ball.y - ball.r < wall.y + wall.h
+            ) {
 
-        // 上下どちらから当たったか
-        const overlapTop = (ball.y + ball.r) - wall.y;
-        const overlapBottom = (wall.y + wall.h) - (ball.y - ball.r);
+                const overlapLeft = (ball.x + ball.r) - wall.x;
+                const overlapRight = (wall.x + wall.w) - (ball.x - ball.r);
 
-        const minOverlap = Math.min(
-            overlapLeft,
-            overlapRight,
-            overlapTop,
-            overlapBottom
-        );
+                const overlapTop = (ball.y + ball.r) - wall.y;
+                const overlapBottom = (wall.y + wall.h) - (ball.y - ball.r);
 
-        if (minOverlap === overlapLeft) {
-            ball.x = wall.x - ball.r;
+                const minOverlap = Math.min(
+                    overlapLeft,
+                    overlapRight,
+                    overlapTop,
+                    overlapBottom
+                );
+
+                if (minOverlap === overlapLeft) {
+                    ball.x = wall.x - ball.r;
+                    ball.vx *= -1;
+                }
+                else if (minOverlap === overlapRight) {
+                    ball.x = wall.x + wall.w + ball.r;
+                    ball.vx *= -1;
+                }
+                else if (minOverlap === overlapTop) {
+                    ball.y = wall.y - ball.r;
+                    ball.vy *= -1;
+                }
+                else {
+                    ball.y = wall.y + wall.h + ball.r;
+                    ball.vy *= -1;
+                }
+            }
+        }
+
+        // ===== 画面端 =====
+        if (ball.x - ball.r < 0) {
+            ball.x = ball.r;
             ball.vx *= -1;
         }
 
-        else if (minOverlap === overlapRight) {
-            ball.x = wall.x + wall.w + ball.r;
+        if (ball.x + ball.r > canvas.width) {
+            ball.x = canvas.width - ball.r;
             ball.vx *= -1;
         }
 
-        else if (minOverlap === overlapTop) {
-            ball.y = wall.y - ball.r;
+        if (ball.y - ball.r < 0) {
+            ball.y = ball.r;
             ball.vy *= -1;
         }
 
-        else {
-            ball.y = wall.y + wall.h + ball.r;
+        if (ball.y + ball.r > canvas.height) {
+            ball.y = canvas.height - ball.r;
             ball.vy *= -1;
         }
 
+        // ===== ゴール =====
+        const dx = ball.x - stage.goal.x;
+        const dy = ball.y - stage.goal.y;
+
+        if (Math.sqrt(dx * dx + dy * dy) < ball.r + stage.goal.r) {
+
+            alert("Stage Clear!");
+            resetBall();
+            return;
+        }
     }
-}
-    // 左右反射
-    if (ball.x - ball.r < 0) {
-        ball.x = ball.r;
-        ball.vx *= -1;
-    }
-
-    if (ball.x + ball.r > canvas.width) {
-        ball.x = canvas.width - ball.r;
-        ball.vx *= -1;
-    }
-
-    // 上下反射
-    if (ball.y - ball.r < 0) {
-        ball.y = ball.r;
-        ball.vy *= -1;
-    }
-
-    if (ball.y + ball.r > canvas.height) {
-        ball.y = canvas.height - ball.r;
-        ball.vy *= -1;
-    }
-
-    // ゴール判定
-    const dx = ball.x - stage.goal.x;
-    const dy = ball.y - stage.goal.y;
-
-    if (Math.sqrt(dx * dx + dy * dy) < ball.r + stage.goal.r) {
-
-        alert("Stage Clear!");
-
-        resetBall();
-
-    }
-
-}
 }
 // ===== 描画 =====
 function draw() {
