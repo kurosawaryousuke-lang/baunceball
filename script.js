@@ -55,6 +55,9 @@ function update() {
 
 ball.x += ball.vx;
 ball.y += ball.vy;
+// 摩擦
+ball.vx *= 0.995;
+ball.vy *= 0.995;
 
         // ===== 壁との当たり判定 =====
         for (const wall of walls) {
@@ -97,6 +100,12 @@ ball.y += ball.vy;
                 }
             }
         }
+        // 十分遅くなったら止まる
+if (Math.abs(ball.vx) < 0.05 && Math.abs(ball.vy) < 0.05) {
+    ball.vx = 0;
+    ball.vy = 0;
+    ball.moving = false;
+}
 
         // ===== 画面端 =====
         if (ball.x - ball.r < 0) {
