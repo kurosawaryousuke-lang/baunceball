@@ -175,26 +175,43 @@ for (const spike of stage.spikes) {
         return;
     }
 }
-        // ===== ゴール =====
-        const dx = ball.x - stage.goal.x;
-        const dy = ball.y - stage.goal.y;
+ // ===== ゴール =====
+const goalDx = ball.x - stage.goal.x;
+const goalDy = ball.y - stage.goal.y;
 
-        if (Math.sqrt(dx * dx + dy * dy) < ball.r + stage.goal.r) {
-if (starsLeft === 0) {
+if (Math.sqrt(goalDx * goalDx + goalDy * goalDy) < ball.r + stage.goal.r) {
 
-    alert("Stage Clear!");
-    resetBall();
-    return;
+    if (starsLeft === 0) {
 
-} else {
+        currentStage++;
 
-    alert("星を全部集めよう！");
-    resetBall();
-    return;
+        if (currentStage >= stages.length) {
 
-}
+            alert("ゲームクリア！！");
+            currentStage = 0;
+
         }
+
+        stage = stages[currentStage];
+        walls = stage.walls;
+
+        // 星を復活
+        for (const star of stage.stars) {
+            star.got = false;
+        }
+
+        resetBall();
+        return;
+
+    } else {
+
+        alert("星を全部集めよう！");
+        resetBall();
+        return;
+
     }
+
+}   
 
 // ===== 描画 =====
 function draw() {
