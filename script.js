@@ -152,15 +152,42 @@ const timer = setInterval(() => {
             ball.vy *= -1;
         }
 
+        // ===== 星を取る =====
+for (const star of stage.stars) {
+
+    if (star.got) continue;
+
+    const dx = ball.x - star.x;
+    const dy = ball.y - star.y;
+
+    if (Math.sqrt(dx * dx + dy * dy) < ball.r + 10) {
+
+        star.got = true;
+
+    }
+
+}
+
+const starsLeft = stage.stars.filter(star => !star.got).length;
+
         // ===== ゴール =====
         const dx = ball.x - stage.goal.x;
         const dy = ball.y - stage.goal.y;
 
         if (Math.sqrt(dx * dx + dy * dy) < ball.r + stage.goal.r) {
+if (starsLeft === 0) {
 
-            alert("Stage Clear!");
-            resetBall();
-            return;
+    alert("Stage Clear!");
+    resetBall();
+    return;
+
+} else {
+
+    alert("星を全部集めよう！");
+    resetBall();
+    return;
+
+}
         }
     }
 
