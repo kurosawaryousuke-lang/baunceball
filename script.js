@@ -9,7 +9,7 @@ const stage = {
 
     stars: [
         { x: 200, y: 100, got: false },
-        { x: 700, y: 500, got: false }
+        { x: 700, y: 500, got: false },
     ]
     spikes: [
     { x: 450, y: 250, r: 15 },
