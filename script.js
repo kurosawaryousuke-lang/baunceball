@@ -16,6 +16,22 @@ const stages = [
     { x: 450, y: 250, r: 15 },
     { x: 600, y: 400, r: 15 }
 ]
+},
+{
+    start: { x: 100, y: 500 },
+
+    goal: { x: 800, y: 80, r: 20 },
+
+    stars: [
+        { x: 200, y: 500, got: false },
+        { x: 500, y: 250, got: false },
+        { x: 700, y: 120, got: false }
+    ],
+
+    spikes: [
+        { x: 350, y: 350, r: 15 },
+        { x: 600, y: 200, r: 15 }
+    ]
 }
 ];
 
