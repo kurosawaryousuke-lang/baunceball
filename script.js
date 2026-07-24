@@ -11,6 +11,10 @@ const stage = {
         { x: 200, y: 100, got: false },
         { x: 700, y: 500, got: false }
     ]
+    spikes: [
+    { x: 450, y: 250, r: 15 },
+    { x: 600, y: 400, r: 15 }
+]
 };
 // ===== ボール =====
 const ball = {
@@ -170,6 +174,20 @@ for (const star of stage.stars) {
 
 const starsLeft = stage.stars.filter(star => !star.got).length;
 
+// ===== トゲ =====
+for (const spike of stage.spikes) {
+
+    const dx = ball.x - spike.x;
+    const dy = ball.y - spike.y;
+
+    if (Math.sqrt(dx * dx + dy * dy) < ball.r + spike.r) {
+
+        alert("💥 トゲに当たった！");
+
+        resetBall();
+        return;
+    }
+}
         // ===== ゴール =====
         const dx = ball.x - stage.goal.x;
         const dy = ball.y - stage.goal.y;
@@ -251,7 +269,27 @@ for (const star of stage.stars) {
     ctx.closePath();
     ctx.fill();
 }
+// ===== トゲ =====
+ctx.fillStyle = "crimson";
 
+for (const spike of stage.spikes) {
+
+    ctx.beginPath();
+
+    for (let i = 0; i < 3; i++) {
+
+        const angle = Math.PI * 2 / 3 * i - Math.PI / 2;
+
+        const x = spike.x + Math.cos(angle) * spike.r;
+        const y = spike.y + Math.sin(angle) * spike.r;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+
+    ctx.closePath();
+    ctx.fill();
+}
 
     // ボール
     ctx.beginPath();
