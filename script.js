@@ -213,6 +213,8 @@ if (Math.sqrt(goalDx * goalDx + goalDy * goalDy) < ball.r + stage.goal.r) {
 
 }   
 
+}
+
 // ===== 描画 =====
 function draw() {
 
