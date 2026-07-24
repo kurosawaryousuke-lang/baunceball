@@ -1,3 +1,5 @@
+let message = "";
+let messageTimer = 0;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 let currentStage = 0;
@@ -203,14 +205,16 @@ if (Math.sqrt(goalDx * goalDx + goalDy * goalDy) < ball.r + stage.goal.r) {
         resetBall();
         return;
 
-    } else {
+   } else {
 
-        alert("星を全部集めよう！");
-        resetBall();
-        return;
+    message = "⭐ あと " + starsLeft + " 個集めよう！";
+    messageTimer = 120;
 
-    }
+}
 
+}
+if (messageTimer > 0) {
+    messageTimer--;
 }   
 
 }
@@ -348,6 +352,20 @@ const starsTotal = stage.stars.length;
 
 document.getElementById("starText").textContent =
     `⭐ ${starsGot} / ${starsTotal}`;
+// ===== メッセージ =====
+if (messageTimer > 0) {
+
+    ctx.fillStyle = "rgba(0,0,0,0.7)";
+    ctx.fillRect(250, 250, 400, 60);
+
+    ctx.fillStyle = "white";
+    ctx.font = "30px sans-serif";
+    ctx.textAlign = "center";
+
+    ctx.fillText(message, 450, 290);
+
+    ctx.textAlign = "left";
+}
 }
 
 // ===== メインループ =====
