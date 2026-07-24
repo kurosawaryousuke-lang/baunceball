@@ -329,6 +329,28 @@ for (const spike of stage.spikes) {
     ctx.font = "20px sans-serif";
     ctx.fillText("角度 : " + angle + "°", 20, 30);
     ctx.fillText("パワー : " + power, 20, 60);
+    // ===== メッセージ =====
+if (messageTimer > 0) {
+
+    const alpha = Math.min(messageTimer / 30, 1);
+
+    ctx.save();
+
+    ctx.globalAlpha = alpha;
+
+    ctx.fillStyle = "rgba(0,0,0,0.75)";
+    ctx.fillRect(220, 240, 460, 80);
+
+    ctx.fillStyle = "white";
+    ctx.font = "32px sans-serif";
+    ctx.textAlign = "center";
+
+    ctx.fillText(message, canvas.width / 2, 290);
+
+    ctx.restore();
+
+    ctx.textAlign = "left";
+}
     if (resetting) {
 
     ctx.fillStyle = "rgba(0,0,0,0.5)";
@@ -352,22 +374,8 @@ const starsTotal = stage.stars.length;
 
 document.getElementById("starText").textContent =
     `⭐ ${starsGot} / ${starsTotal}`;
-// ===== メッセージ =====
-if (messageTimer > 0) {
-
-    ctx.fillStyle = "rgba(0,0,0,0.7)";
-    ctx.fillRect(250, 250, 400, 60);
-
-    ctx.fillStyle = "white";
-    ctx.font = "30px sans-serif";
-    ctx.textAlign = "center";
-
-    ctx.fillText(message, 450, 290);
-
-    ctx.textAlign = "left";
-}
-}
-
+document.getElementById("stageText").textContent =
+    "Stage " + (currentStage + 1);
 // ===== メインループ =====
 function gameLoop() {
     update();
