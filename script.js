@@ -25,6 +25,7 @@ const ball = {
 // ===== 操作 =====
 let angle = 0;
 let power = 8;
+let resetting = false;
 
 // ===== リセット =====
 function resetBall() {
@@ -100,11 +101,20 @@ ball.vy *= 0.995;
                 }
             }
         }
-        // 十分遅くなったら止まる
-if (Math.abs(ball.vx) < 0.05 && Math.abs(ball.vy) < 0.05) {
+if (
+    Math.abs(ball.vx) < 0.05 &&
+    Math.abs(ball.vy) < 0.05 &&
+    !resetting
+) {
     ball.vx = 0;
     ball.vy = 0;
-    ball.moving = false;
+
+    resetting = true;
+
+    setTimeout(() => {
+        resetBall();
+        resetting = false;
+    }, 3000);
 }
 
         // ===== 画面端 =====
