@@ -12,20 +12,6 @@ const stage = {
         { x: 700, y: 500, got: false }
     ]
 };
-// 星
-ctx.fillStyle = "gold";
-
-for (const star of stage.stars) {
-
-    if (!star.got) {
-
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
-        ctx.fill();
-
-    }
-
-}
 // ===== ボール =====
 const ball = {
     x: stage.start.x,
@@ -67,17 +53,8 @@ function update() {
 
     if (!ball.moving) return;
 
-    const steps = Math.ceil(
-        Math.max(Math.abs(ball.vx), Math.abs(ball.vy))
-    );
-
-    const stepX = ball.vx / steps;
-    const stepY = ball.vy / steps;
-
-    for (let i = 0; i < steps; i++) {
-
-        ball.x += stepX;
-        ball.y += stepY;
+ball.x += ball.vx;
+ball.y += ball.vy;
 
         // ===== 壁との当たり判定 =====
         for (const wall of walls) {
@@ -153,7 +130,7 @@ function update() {
             return;
         }
     }
-}
+
 // ===== 描画 =====
 function draw() {
 
@@ -177,6 +154,21 @@ ctx.fillStyle = "#2b6cff";
 for (const wall of walls) {
     ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
 }
+// 星
+ctx.fillStyle = "gold";
+
+for (const star of stage.stars) {
+
+    if (!star.got) {
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+    }
+
+}
+
 
     // ボール
     ctx.beginPath();
@@ -231,11 +223,10 @@ document.addEventListener("keydown", (e) => {
     if (angle >= 360) angle = 0;
 }
 
-        if (e.key === "ArrowUp") {
+  if (e.key === "ArrowUp") {
     power++;
-    if (power > 100) power = 100;
+    if (power > 20) power = 20;
 }
-
         if (e.key === "ArrowDown") {
             power--;
             if (power < 1) power = 1;
