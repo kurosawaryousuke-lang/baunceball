@@ -2,7 +2,8 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 // ===== ステージ =====
-const stage = {
+const stages = [
+{
     start: { x: 100, y: 300 },
 
     goal: { x: 820, y: 300, r: 20 },
@@ -15,7 +16,11 @@ const stage = {
     { x: 450, y: 250, r: 15 },
     { x: 600, y: 400, r: 15 }
 ]
-};
+}
+];
+
+let currentStage = 0;
+let stage = stages[currentStage];
 // ===== ボール =====
 const ball = {
     x: stage.start.x,
