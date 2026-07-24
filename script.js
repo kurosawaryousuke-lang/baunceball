@@ -254,6 +254,24 @@ for (const star of stage.stars) {
     ctx.font = "20px sans-serif";
     ctx.fillText("角度 : " + angle + "°", 20, 30);
     ctx.fillText("パワー : " + power, 20, 60);
+    if (resetting) {
+
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    ctx.font = "80px sans-serif";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        countdown,
+        canvas.width / 2,
+        canvas.height / 2
+    );
+
+    ctx.textAlign = "left";
+
+}
 }
 
 // ===== メインループ =====
