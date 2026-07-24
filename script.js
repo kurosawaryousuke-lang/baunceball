@@ -39,7 +39,7 @@ function resetBall() {
 // ===== 発射 =====
 function shoot() {
 
-    if (ball.moving) return;
+    if (ball.moving || resetting) return;
 
     const rad = angle * Math.PI / 180;
 
