@@ -26,6 +26,7 @@ const ball = {
 let angle = 0;
 let power = 8;
 let resetting = false;
+let countdown = 0;
 
 // ===== リセット =====
 function resetBall() {
@@ -111,10 +112,23 @@ if (
 
     resetting = true;
 
-    setTimeout(() => {
+countdown = 3;
+
+const timer = setInterval(() => {
+
+    countdown--;
+
+    if (countdown <= 0) {
+
+        clearInterval(timer);
+
         resetBall();
+
         resetting = false;
-    }, 3000);
+
+    }
+
+}, 1000);
 }
 
         // ===== 画面端 =====
