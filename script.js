@@ -299,6 +299,11 @@ for (const star of stage.stars) {
     ctx.textAlign = "left";
 
 }
+const starsGot = stage.stars.filter(star => star.got).length;
+const starsTotal = stage.stars.length;
+
+document.getElementById("starText").textContent =
+    `⭐ ${starsGot} / ${starsTotal}`;
 }
 
 // ===== メインループ =====
