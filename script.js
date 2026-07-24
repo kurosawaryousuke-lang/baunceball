@@ -376,6 +376,7 @@ document.getElementById("starText").textContent =
     `⭐ ${starsGot} / ${starsTotal}`;
 document.getElementById("stageText").textContent =
     "Stage " + (currentStage + 1);
+}
 // ===== メインループ =====
 function gameLoop() {
     update();
