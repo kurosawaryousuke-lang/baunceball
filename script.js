@@ -154,19 +154,42 @@ ctx.fillStyle = "#2b6cff";
 for (const wall of walls) {
     ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
 }
-// 星
 ctx.fillStyle = "gold";
 
 for (const star of stage.stars) {
 
-    if (!star.got) {
+    if (star.got) continue;
 
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, 8, 0, Math.PI * 2);
-        ctx.fill();
+    const spikes = 5;
+    const outer = 10;
+    const inner = 4;
 
+    let rot = Math.PI / 2 * 3;
+    let x = star.x;
+    let y = star.y;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y - outer);
+
+    for (let i = 0; i < spikes; i++) {
+
+        ctx.lineTo(
+            x + Math.cos(rot) * outer,
+            y + Math.sin(rot) * outer
+        );
+
+        rot += Math.PI / spikes;
+
+        ctx.lineTo(
+            x + Math.cos(rot) * inner,
+            y + Math.sin(rot) * inner
+        );
+
+        rot += Math.PI / spikes;
     }
 
+    ctx.closePath();
+    ctx.fill();
 }
 
 
