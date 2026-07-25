@@ -218,9 +218,7 @@ if (Math.sqrt(goalDx * goalDx + goalDy * goalDy) < ball.r + stage.goal.r) {
 
         }
 
-        stage = stages[currentStage];
-        walls = stage.walls;
-
+        loadStage();
         // 星を復活
         for (const star of stage.stars) {
             star.got = false;
