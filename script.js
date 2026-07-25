@@ -4,6 +4,9 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 let currentStage = 0;
 let stage = stages[currentStage];
+let movingPlatforms = [];
+
+loadStage();
 let walls = stage.walls;
 // ===== ボール =====
 const ball = {
@@ -28,6 +31,16 @@ function resetBall() {
     ball.vx = 0;
     ball.vy = 0;
     ball.moving = false;
+}
+
+function loadStage() {
+
+    stage = stages[currentStage];
+
+    walls = stage.walls;
+
+    movingPlatforms = stage.movingPlatforms || [];
+
 }
 
 // ===== 発射 =====
@@ -241,6 +254,12 @@ ctx.fillStyle = "#2b6cff";
 
 for (const wall of walls) {
     ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+}
+   //動く壁
+ctx.fillStyle = "orange";
+
+for (const p of movingPlatforms) {
+    ctx.fillRect(p.x, p.y, p.w, p.h);
 }
 ctx.fillStyle = "gold";
 
