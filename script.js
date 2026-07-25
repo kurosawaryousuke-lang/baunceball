@@ -71,6 +71,29 @@ for (const p of movingPlatforms) {
 
 }
 
+// ===== 動く床に乗る =====
+ball.onPlatform = false;
+
+for (const p of movingPlatforms) {
+
+    if (
+        ball.x > p.x &&
+        ball.x < p.x + p.w &&
+        ball.y + ball.r >= p.y &&
+        ball.y + ball.r <= p.y + 8
+    ) {
+
+        ball.onPlatform = true;
+        ball.moving = false;
+
+        ball.y = p.y - ball.r;
+
+        ball.x += p.vx;
+
+    }
+
+}
+
 
     if (!ball.moving) return;
 
