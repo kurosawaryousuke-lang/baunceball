@@ -67,6 +67,17 @@ ball.y += ball.vy;
 ball.vx *= 0.995;
 ball.vy *= 0.995;
 
+// ===== 動く床 =====
+for (const p of movingPlatforms) {
+
+    p.x += p.vx;
+
+    if (p.x < p.minX || p.x > p.maxX) {
+        p.vx *= -1;
+    }
+
+}
+
         // ===== 壁との当たり判定 =====
         for (const wall of walls) {
 
