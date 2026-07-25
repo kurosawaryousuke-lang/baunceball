@@ -15,7 +15,8 @@ const ball = {
     r: 10,
     vx: 0,
     vy: 0,
-    moving: false
+    moving: false,
+    onPlatform: false
 };
 
 // ===== 操作 =====
@@ -59,14 +60,6 @@ function shoot() {
 // ===== 更新 =====
 function update() {
 
-    if (!ball.moving) return;
-
-ball.x += ball.vx;
-ball.y += ball.vy;
-// 摩擦
-ball.vx *= 0.995;
-ball.vy *= 0.995;
-
 // ===== 動く床 =====
 for (const p of movingPlatforms) {
 
@@ -77,6 +70,16 @@ for (const p of movingPlatforms) {
     }
 
 }
+
+
+    if (!ball.moving) return;
+
+ball.x += ball.vx;
+ball.y += ball.vy;
+// 摩擦
+ball.vx *= 0.995;
+ball.vy *= 0.995;
+
 
         // ===== 壁との当たり判定 =====
         for (const wall of walls) {
@@ -336,7 +339,7 @@ for (const spike of stage.spikes) {
     ctx.fill();
 
     // 照準
-    if (!ball.moving) {
+    if (!ball.moving || ball.onPlatform) {
 
         const rad = angle * Math.PI / 180;
 
