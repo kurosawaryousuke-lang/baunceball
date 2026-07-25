@@ -43,11 +43,11 @@ function loadStage() {
     movingPlatforms = stage.movingPlatforms || [];
 
 }
-
 // ===== 発射 =====
 function shoot() {
 
-    if (ball.moving || resetting) return;
+    // リセット中は撃てない
+    if (resetting) return;
 
     const rad = angle * Math.PI / 180;
 
@@ -55,54 +55,69 @@ function shoot() {
     ball.vy = -Math.sin(rad) * power;
 
     ball.moving = true;
+    ball.onPlatform = false;
 }
 
 // ===== 更新 =====
 function update() {
 
-// ===== 動く床 =====
-for (const p of movingPlatforms) {
+    // ===== 動く床を動かす =====
+    for (const p of movingPlatforms) {
 
-    p.x += p.vx;
+        p.x += p.vx;
 
-    if (p.x < p.minX || p.x > p.maxX) {
-        p.vx *= -1;
-    }
-
-}
-
-// ===== 動く床に乗る =====
-ball.onPlatform = false;
-
-for (const p of movingPlatforms) {
-
-    if (
-        ball.x > p.x &&
-        ball.x < p.x + p.w &&
-        ball.y + ball.r >= p.y &&
-        ball.y + ball.r <= p.y + 8
-    ) {
-
-        ball.onPlatform = true;
-        ball.moving = false;
-
-        ball.y = p.y - ball.r;
-
-        ball.x += p.vx;
+        if (p.x <= p.minX || p.x + p.w >= p.maxX) {
+            p.vx *= -1;
+        }
 
     }
 
-}
+    // ===== 動く床に乗る =====
+    let onAnyPlatform = false;
 
+    for (const p of movingPlatforms) {
 
-    if (!ball.moving) return;
+        if (
+            ball.x > p.x &&
+            ball.x < p.x + p.w &&
+            ball.y + ball.r >= p.y &&
+            ball.y + ball.r <= p.y + 8
+        ) {
 
-ball.x += ball.vx;
-ball.y += ball.vy;
-// 摩擦
-ball.vx *= 0.995;
-ball.vy *= 0.995;
+            onAnyPlatform = true;
 
+            ball.onPlatform = true;
+            ball.moving = false;
+
+            ball.y = p.y - ball.r;
+
+            // 足場と一緒に動く
+            ball.x += p.vx;
+        }
+    }
+
+    if (!onAnyPlatform) {
+        ball.onPlatform = false;
+    }
+
+    // 飛んでいる時だけ速度で移動
+    if (ball.moving) {
+
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        // 摩擦
+        ball.vx *= 0.995;
+        ball.vy *= 0.995;
+
+    }
+
+    // 止まっていて足場にも乗っていないなら終了
+    if (!ball.moving && !ball.onPlatform) {
+        return;
+    }
+
+    // ↓↓↓この下は今の壁判定・トゲ判定・ゴール判定をそのまま残す↓↓↓
 
         // ===== 壁との当たり判定 =====
         for (const wall of walls) {
@@ -443,31 +458,40 @@ gameLoop();
 // ===== キー操作 =====
 document.addEventListener("keydown", (e) => {
 
-    if (!ball.moving) {
+    // 照準操作
+    if (!ball.moving || ball.onPlatform) {
 
         if (e.key === "ArrowLeft") {
-    angle -= 5;
-    if (angle < 0) angle = 355;
-}
-        if (e.key === "ArrowRight") {
-    angle += 5;
-    if (angle >= 360) angle = 0;
-}
+            angle -= 5;
+            if (angle < 0) angle = 355;
+        }
 
-  if (e.key === "ArrowUp") {
-    power++;
-    if (power > 20) power = 20;
-}
+        if (e.key === "ArrowRight") {
+            angle += 5;
+            if (angle >= 360) angle = 0;
+        }
+
+        if (e.key === "ArrowUp") {
+            power++;
+            if (power > 20) power = 20;
+        }
+
         if (e.key === "ArrowDown") {
             power--;
             if (power < 1) power = 1;
         }
     }
 
-    if (e.code === "Space") {       e.preventDefault();
-        shoot();
+    // 発射
+    if (e.code === "Space") {
+        e.preventDefault();
+
+        if (!ball.moving || ball.onPlatform) {
+            shoot();
+        }
     }
 
+    // リセット
     if (e.key === "r" || e.key === "R") {
         resetBall();
     }
