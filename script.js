@@ -5,9 +5,9 @@ const ctx = canvas.getContext("2d");
 let currentStage = 0;
 let stage = stages[currentStage];
 let movingPlatforms = [];
-
-loadStage();
 let walls = stage.walls;
+loadStage();
+
 // ===== ボール =====
 const ball = {
     x: stage.start.x,
