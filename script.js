@@ -77,37 +77,7 @@ function update() {
 
     }
 
-    // ===== 動く床に乗る =====
-    let onAnyPlatform = false;
-
-    for (const p of movingPlatforms) {
-
-        if (
-            ball.platformCooldown === 0 &&
-            ball.x > p.x &&
-            ball.x < p.x + p.w &&
-            ball.y + ball.r >= p.y &&
-            ball.y + ball.r <= p.y + 8
-        ) {
-
-            onAnyPlatform = true;
-
-            if (!ball.moving) {
-
-    ball.onPlatform = true;
-
-    ball.y = p.y - ball.r;
-
-    // 足場と一緒に動く
-    ball.x += p.vx;
-
-}
-        }
-    }
-
-    if (!onAnyPlatform) {
-        ball.onPlatform = false;
-    }
+ 
 
     // 飛んでいる時だけ速度で移動
     if (ball.moving) {
@@ -121,11 +91,7 @@ function update() {
 
     }
 
-    // 止まっていて足場にも乗っていないなら終了
-    if (!ball.moving && !ball.onPlatform) {
-        return;
-    }
-
+   
     // ↓↓↓この下は今の壁判定・トゲ判定・ゴール判定をそのまま残す↓↓↓
 
         // ===== 壁との当たり判定 =====
@@ -169,6 +135,57 @@ function update() {
                 }
             }
         }
+        // ===== 動く床との当たり判定 =====
+ball.onPlatform = false;
+
+for (const p of movingPlatforms) {
+
+    if (
+        ball.platformCooldown === 0 &&
+        ball.x + ball.r > p.x &&
+        ball.x - ball.r < p.x + p.w &&
+        ball.y + ball.r > p.y &&
+        ball.y - ball.r < p.y + p.h
+    ) {
+
+        const overlapLeft = (ball.x + ball.r) - p.x;
+        const overlapRight = (p.x + p.w) - (ball.x - ball.r);
+        const overlapTop = (ball.y + ball.r) - p.y;
+        const overlapBottom = (p.y + p.h) - (ball.y - ball.r);
+
+        const minOverlap = Math.min(
+            overlapLeft,
+            overlapRight,
+            overlapTop,
+            overlapBottom
+        );
+
+        if (minOverlap === overlapLeft) {
+            ball.x = p.x - ball.r;
+            ball.vx *= -1;
+        }
+        else if (minOverlap === overlapRight) {
+            ball.x = p.x + p.w + ball.r;
+            ball.vx *= -1;
+        }
+        else if (minOverlap === overlapTop) {
+
+            ball.y = p.y - ball.r;
+            ball.vy = 0;
+
+            ball.onPlatform = true;
+
+            if (!ball.moving) {
+                ball.x += p.vx;
+            }
+
+        }
+        else {
+            ball.y = p.y + p.h + ball.r;
+            ball.vy *= -1;
+        }
+    }
+}
 if (
     Math.abs(ball.vx) < 0.05 &&
     Math.abs(ball.vy) < 0.05 &&
