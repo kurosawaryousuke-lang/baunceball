@@ -17,6 +17,7 @@ const ball = {
     vy: 0,
     moving: false,
     onPlatform: false
+    platformCooldown: 0,
 };
 
 // ===== 操作 =====
@@ -56,10 +57,14 @@ function shoot() {
 
     ball.moving = true;
     ball.onPlatform = false;
+    ball.platformCooldown = 10;
 }
 
 // ===== 更新 =====
 function update() {
+    if (ball.platformCooldown > 0) {
+    ball.platformCooldown--;
+}
 
     // ===== 動く床を動かす =====
     for (const p of movingPlatforms) {
@@ -78,6 +83,7 @@ function update() {
     for (const p of movingPlatforms) {
 
         if (
+            ball.platformCooldown === 0 &&
             ball.x > p.x &&
             ball.x < p.x + p.w &&
             ball.y + ball.r >= p.y &&
@@ -86,13 +92,16 @@ function update() {
 
             onAnyPlatform = true;
 
-            ball.onPlatform = true;
-            ball.moving = false;
+            if (!ball.moving) {
 
-            ball.y = p.y - ball.r;
+    ball.onPlatform = true;
 
-            // 足場と一緒に動く
-            ball.x += p.vx;
+    ball.y = p.y - ball.r;
+
+    // 足場と一緒に動く
+    ball.x += p.vx;
+
+}
         }
     }
 
