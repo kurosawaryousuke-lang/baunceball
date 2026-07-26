@@ -504,5 +504,25 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "r" || e.key === "R") {
         resetBall();
     }
+// リセット
+if (e.key === "r" || e.key === "R") {
+    resetBall();
+}
 
+// ===== ステージスキップ =====
+if (
+    e.key >= "1" &&
+    Number(e.key) <= stages.length
+) {
+
+    currentStage = Number(e.key) - 1;
+
+    loadStage();
+
+    for (const star of stage.stars) {
+        star.got = false;
+    }
+
+    resetBall();
+}
 });
