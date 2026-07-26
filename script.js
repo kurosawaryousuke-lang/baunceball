@@ -187,6 +187,7 @@ for (const p of movingPlatforms) {
     }
 }
 if (
+    !ball.onPlatform &&
     Math.abs(ball.vx) < 0.05 &&
     Math.abs(ball.vy) < 0.05 &&
     !resetting
