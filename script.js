@@ -16,7 +16,7 @@ const ball = {
     vx: 0,
     vy: 0,
     moving: false,
-    onPlatform: false
+    onPlatform: false,
     platformCooldown: 0,
 };
 
