@@ -68,14 +68,32 @@ function update() {
     }
 
     // ===== 動く床を動かす =====
-    for (const p of movingPlatforms) {
+    // ===== 動く床を動かす =====
+for (const p of movingPlatforms) {
 
-        p.x += p.vx;
+    // 横移動
+    p.x += p.vx;
 
-        if (p.x <= p.minX || p.x + p.w >= p.maxX) {
-            p.vx *= -1;
-        }
+    // 縦移動
+    p.y += p.vy || 0;
+
+    // 横方向で反転
+    if (
+        (p.vx > 0 && p.x + p.w >= p.maxX) ||
+        (p.vx < 0 && p.x <= p.minX)
+    ) {
+        p.vx *= -1;
     }
+
+    // 縦方向で反転
+    if (
+        (p.vy > 0 && p.y + p.h >= p.maxY) ||
+        (p.vy < 0 && p.y <= p.minY)
+    ) {
+        p.vy *= -1;
+    }
+
+}
     // 足場に乗っている間は一緒に動く
 if (ball.platform) {
     ball.x += ball.platform.vx;
