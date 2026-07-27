@@ -59,12 +59,13 @@ function shoot() {
     ball.onPlatform = false;
     ball.platformCooldown = 10;
 }
-
 // ===== 更新 =====
 function update() {
+
+    // クールダウン
     if (ball.platformCooldown > 0) {
-    ball.platformCooldown--;
-}
+        ball.platformCooldown--;
+    }
 
     // ===== 動く床を動かす =====
     for (const p of movingPlatforms) {
@@ -74,241 +75,243 @@ function update() {
         if (p.x <= p.minX || p.x + p.w >= p.maxX) {
             p.vx *= -1;
         }
-
     }
 
- 
-
-    // 飛んでいる時だけ速度で移動
+    // ===== ボール移動 =====
     if (ball.moving) {
 
         ball.x += ball.vx;
         ball.y += ball.vy;
 
-        // 摩擦
         ball.vx *= 0.995;
         ball.vy *= 0.995;
-
     }
 
-   
-    // ↓↓↓この下は今の壁判定・トゲ判定・ゴール判定をそのまま残す↓↓↓
+    // ===== 壁との当たり判定 =====
+    for (const wall of walls) {
 
-        // ===== 壁との当たり判定 =====
-        for (const wall of walls) {
+        if (
+            ball.x + ball.r > wall.x &&
+            ball.x - ball.r < wall.x + wall.w &&
+            ball.y + ball.r > wall.y &&
+            ball.y - ball.r < wall.y + wall.h
+        ) {
 
-            if (
-                ball.x + ball.r > wall.x &&
-                ball.x - ball.r < wall.x + wall.w &&
-                ball.y + ball.r > wall.y &&
-                ball.y - ball.r < wall.y + wall.h
-            ) {
+            const overlapLeft = (ball.x + ball.r) - wall.x;
+            const overlapRight = (wall.x + wall.w) - (ball.x - ball.r);
 
-                const overlapLeft = (ball.x + ball.r) - wall.x;
-                const overlapRight = (wall.x + wall.w) - (ball.x - ball.r);
+            const overlapTop = (ball.y + ball.r) - wall.y;
+            const overlapBottom = (wall.y + wall.h) - (ball.y - ball.r);
 
-                const overlapTop = (ball.y + ball.r) - wall.y;
-                const overlapBottom = (wall.y + wall.h) - (ball.y - ball.r);
+            const minOverlap = Math.min(
+                overlapLeft,
+                overlapRight,
+                overlapTop,
+                overlapBottom
+            );
 
-                const minOverlap = Math.min(
-                    overlapLeft,
-                    overlapRight,
-                    overlapTop,
-                    overlapBottom
-                );
-
-                if (minOverlap === overlapLeft) {
-                    ball.x = wall.x - ball.r;
-                    ball.vx *= -1;
-                }
-                else if (minOverlap === overlapRight) {
-                    ball.x = wall.x + wall.w + ball.r;
-                    ball.vx *= -1;
-                }
-                else if (minOverlap === overlapTop) {
-                    ball.y = wall.y - ball.r;
-                    ball.vy *= -1;
-                }
-                else {
-                    ball.y = wall.y + wall.h + ball.r;
-                    ball.vy *= -1;
-                }
+            if (minOverlap === overlapLeft) {
+                ball.x = wall.x - ball.r;
+                ball.vx *= -1;
+            }
+            else if (minOverlap === overlapRight) {
+                ball.x = wall.x + wall.w + ball.r;
+                ball.vx *= -1;
+            }
+            else if (minOverlap === overlapTop) {
+                ball.y = wall.y - ball.r;
+                ball.vy *= -1;
+            }
+            else {
+                ball.y = wall.y + wall.h + ball.r;
+                ball.vy *= -1;
             }
         }
-        // ===== 動く床との当たり判定 =====
-ball.onPlatform = false;
+    }
 
-for (const p of movingPlatforms) {
+    // ===== 動く床との当たり判定 =====
+    ball.onPlatform = false;
 
+    for (const p of movingPlatforms) {
+
+        if (
+            ball.platformCooldown === 0 &&
+            ball.x + ball.r > p.x &&
+            ball.x - ball.r < p.x + p.w &&
+            ball.y + ball.r > p.y &&
+            ball.y - ball.r < p.y + p.h
+        ) {
+
+            const overlapLeft = (ball.x + ball.r) - p.x;
+            const overlapRight = (p.x + p.w) - (ball.x - ball.r);
+
+            const overlapTop = (ball.y + ball.r) - p.y;
+            const overlapBottom = (p.y + p.h) - (ball.y - ball.r);
+
+            const minOverlap = Math.min(
+                overlapLeft,
+                overlapRight,
+                overlapTop,
+                overlapBottom
+            );
+
+            if (minOverlap === overlapLeft) {
+
+                ball.x = p.x - ball.r;
+                ball.vx *= -1;
+
+            }
+            else if (minOverlap === overlapRight) {
+
+                ball.x = p.x + p.w + ball.r;
+                ball.vx *= -1;
+
+            }
+            else if (minOverlap === overlapTop) {
+
+                ball.y = p.y - ball.r;
+                ball.vy = 0;
+
+                ball.onPlatform = true;
+                ball.moving = false;
+
+                ball.x += p.vx;
+
+            }
+            else {
+
+                ball.y = p.y + p.h + ball.r;
+                ball.vy *= -1;
+
+            }
+        }
+    }
+        // ===== 止まったらカウントダウン =====
     if (
-        ball.platformCooldown === 0 &&
-        ball.x + ball.r > p.x &&
-        ball.x - ball.r < p.x + p.w &&
-        ball.y + ball.r > p.y &&
-        ball.y - ball.r < p.y + p.h
+        ball.moving &&
+        !ball.onPlatform &&
+        Math.abs(ball.vx) < 0.05 &&
+        Math.abs(ball.vy) < 0.05 &&
+        !resetting
     ) {
 
-        const overlapLeft = (ball.x + ball.r) - p.x;
-        const overlapRight = (p.x + p.w) - (ball.x - ball.r);
-        const overlapTop = (ball.y + ball.r) - p.y;
-        const overlapBottom = (p.y + p.h) - (ball.y - ball.r);
+        ball.vx = 0;
+        ball.vy = 0;
+        ball.moving = false;
 
-        const minOverlap = Math.min(
-            overlapLeft,
-            overlapRight,
-            overlapTop,
-            overlapBottom
-        );
+        resetting = true;
+        countdown = 3;
 
-        if (minOverlap === overlapLeft) {
-            ball.x = p.x - ball.r;
-            ball.vx *= -1;
-        }
-        else if (minOverlap === overlapRight) {
-            ball.x = p.x + p.w + ball.r;
-            ball.vx *= -1;
-        }
-        else if (minOverlap === overlapTop) {
+        const timer = setInterval(() => {
 
-            ball.y = p.y - ball.r;
-            ball.vy = 0;
+            countdown--;
 
-            ball.onPlatform = true;
+            if (countdown <= 0) {
 
-            if (!ball.moving) {
-                ball.x += p.vx;
+                clearInterval(timer);
+
+                resetBall();
+
+                resetting = false;
+
             }
 
-        }
-        else {
-            ball.y = p.y + p.h + ball.r;
-            ball.vy *= -1;
-        }
-    }
-}
-if (
-    !ball.onPlatform &&
-    Math.abs(ball.vx) < 0.05 &&
-    Math.abs(ball.vy) < 0.05 &&
-    !resetting
-) {
-    ball.vx = 0;
-    ball.vy = 0;
-
-    resetting = true;
-
-countdown = 3;
-
-const timer = setInterval(() => {
-
-    countdown--;
-
-    if (countdown <= 0) {
-
-        clearInterval(timer);
-
-        resetBall();
-
-        resetting = false;
-
+        }, 1000);
     }
 
-}, 1000);
-}
+    // ===== 画面端 =====
+    if (ball.x - ball.r < 0) {
+        ball.x = ball.r;
+        ball.vx *= -1;
+    }
 
-        // ===== 画面端 =====
-        if (ball.x - ball.r < 0) {
-            ball.x = ball.r;
-            ball.vx *= -1;
+    if (ball.x + ball.r > canvas.width) {
+        ball.x = canvas.width - ball.r;
+        ball.vx *= -1;
+    }
+
+    if (ball.y - ball.r < 0) {
+        ball.y = ball.r;
+        ball.vy *= -1;
+    }
+
+    if (ball.y + ball.r > canvas.height) {
+        ball.y = canvas.height - ball.r;
+        ball.vy *= -1;
+    }
+
+    // ===== 星を取る =====
+    for (const star of stage.stars) {
+
+        if (star.got) continue;
+
+        const dx = ball.x - star.x;
+        const dy = ball.y - star.y;
+
+        if (Math.sqrt(dx * dx + dy * dy) < ball.r + 10) {
+
+            star.got = true;
+
         }
+    }
 
-        if (ball.x + ball.r > canvas.width) {
-            ball.x = canvas.width - ball.r;
-            ball.vx *= -1;
+    const starsLeft = stage.stars.filter(star => !star.got).length;
+
+    // ===== トゲ =====
+    for (const spike of stage.spikes) {
+
+        const dx = ball.x - spike.x;
+        const dy = ball.y - spike.y;
+
+        if (Math.sqrt(dx * dx + dy * dy) < ball.r + spike.r) {
+
+            alert("💥 トゲに当たった！");
+
+            resetBall();
+            return;
         }
+    }
+        // ===== ゴール =====
+    const goalDx = ball.x - stage.goal.x;
+    const goalDy = ball.y - stage.goal.y;
 
-        if (ball.y - ball.r < 0) {
-            ball.y = ball.r;
-            ball.vy *= -1;
+    if (Math.sqrt(goalDx * goalDx + goalDy * goalDy) < ball.r + stage.goal.r) {
+
+        if (starsLeft === 0) {
+
+            currentStage++;
+
+            if (currentStage >= stages.length) {
+
+                alert("🎉 ゲームクリア！！");
+                currentStage = 0;
+
+            }
+
+            loadStage();
+
+            // 星を復活
+            for (const star of stage.stars) {
+                star.got = false;
+            }
+
+            resetBall();
+            return;
+
+        } else {
+
+            message = "⭐ あと " + starsLeft + " 個集めよう！";
+            messageTimer = 120;
+
         }
+    }
 
-        if (ball.y + ball.r > canvas.height) {
-            ball.y = canvas.height - ball.r;
-            ball.vy *= -1;
-        }
-
-        // ===== 星を取る =====
-for (const star of stage.stars) {
-
-    if (star.got) continue;
-
-    const dx = ball.x - star.x;
-    const dy = ball.y - star.y;
-
-    if (Math.sqrt(dx * dx + dy * dy) < ball.r + 10) {
-
-        star.got = true;
-
+    // ===== メッセージタイマー =====
+    if (messageTimer > 0) {
+        messageTimer--;
     }
 
 }
-
-const starsLeft = stage.stars.filter(star => !star.got).length;
-
-// ===== トゲ =====
-for (const spike of stage.spikes) {
-
-    const dx = ball.x - spike.x;
-    const dy = ball.y - spike.y;
-
-    if (Math.sqrt(dx * dx + dy * dy) < ball.r + spike.r) {
-
-        alert("💥 トゲに当たった！");
-
-        resetBall();
-        return;
-    }
-}
- // ===== ゴール =====
-const goalDx = ball.x - stage.goal.x;
-const goalDy = ball.y - stage.goal.y;
-
-if (Math.sqrt(goalDx * goalDx + goalDy * goalDy) < ball.r + stage.goal.r) {
-
-    if (starsLeft === 0) {
-
-        currentStage++;
-
-        if (currentStage >= stages.length) {
-
-            alert("ゲームクリア！！");
-            currentStage = 0;
-
-        }
-
-        loadStage();
-        // 星を復活
-        for (const star of stage.stars) {
-            star.got = false;
-        }
-
-        resetBall();
-        return;
-
-   } else {
-
-    message = "⭐ あと " + starsLeft + " 個集めよう！";
-    messageTimer = 120;
-
-}
-
-}
-if (messageTimer > 0) {
-    messageTimer--;
-}   
-
-}
-
 // ===== 描画 =====
 function draw() {
 
