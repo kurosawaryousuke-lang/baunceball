@@ -130,63 +130,77 @@ function update() {
     }
 
     // ===== 動く床との当たり判定 =====
-    ball.onPlatform = false;
+ball.onPlatform = false;
 
-    for (const p of movingPlatforms) {
+for (const p of movingPlatforms) {
 
-        if (
-            ball.platformCooldown === 0 &&
-            ball.x + ball.r > p.x &&
-            ball.x - ball.r < p.x + p.w &&
-            ball.y + ball.r > p.y &&
-            ball.y - ball.r < p.y + p.h
-        ) {
+    if (
+        ball.platformCooldown === 0 &&
+        ball.x + ball.r > p.x &&
+        ball.x - ball.r < p.x + p.w &&
+        ball.y + ball.r > p.y &&
+        ball.y - ball.r < p.y + p.h
+    ) {
 
-            const overlapLeft = (ball.x + ball.r) - p.x;
-            const overlapRight = (p.x + p.w) - (ball.x - ball.r);
+        const overlapLeft   = (ball.x + ball.r) - p.x;
+        const overlapRight  = (p.x + p.w) - (ball.x - ball.r);
+        const overlapTop    = (ball.y + ball.r) - p.y;
+        const overlapBottom = (p.y + p.h) - (ball.y - ball.r);
 
-            const overlapTop = (ball.y + ball.r) - p.y;
-            const overlapBottom = (p.y + p.h) - (ball.y - ball.r);
+        const minOverlap = Math.min(
+            overlapLeft,
+            overlapRight,
+            overlapTop,
+            overlapBottom
+        );
 
-            const minOverlap = Math.min(
-                overlapLeft,
-                overlapRight,
-                overlapTop,
-                overlapBottom
-            );
+        // ===== 左から =====
+        if (minOverlap === overlapLeft) {
 
-            if (minOverlap === overlapLeft) {
+            ball.x = p.x - ball.r;
+            ball.vx *= -1;
 
-                ball.x = p.x - ball.r;
-                ball.vx *= -1;
+        }
 
-            }
-            else if (minOverlap === overlapRight) {
+        // ===== 右から =====
+        else if (minOverlap === overlapRight) {
 
-                ball.x = p.x + p.w + ball.r;
-                ball.vx *= -1;
+            ball.x = p.x + p.w + ball.r;
+            ball.vx *= -1;
 
-            }
-            else if (minOverlap === overlapTop) {
+        }
 
-                ball.y = p.y - ball.r;
-                ball.vy = 0;
+        // ===== 上から乗る =====
+        else if (minOverlap === overlapTop) {
 
-                ball.onPlatform = true;
-                ball.moving = false;
+            ball.y = p.y - ball.r;
+            ball.vy = 0;
 
-                ball.x += p.vx;
+            ball.onPlatform = true;
+            ball.moving = false;
 
-            }
-            else {
+            // 足場と一緒に移動
+            ball.x += p.vx;
+            if (p.vy) ball.y += p.vy;
 
-                ball.y = p.y + p.h + ball.r;
-                ball.vy *= -1;
+        }
 
-            }
+        // ===== 下からも乗る =====
+        else {
+
+            ball.y = p.y + p.h + ball.r;
+            ball.vy = 0;
+
+            ball.onPlatform = true;
+            ball.moving = false;
+
+            // 足場と一緒に移動
+            ball.x += p.vx;
+            if (p.vy) ball.y += p.vy;
+
         }
     }
-        // ===== 止まったらカウントダウン =====
+}    // ===== 止まったらカウントダウン =====
     if (
         ball.moving &&
         !ball.onPlatform &&
