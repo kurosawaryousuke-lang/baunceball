@@ -17,9 +17,9 @@ const ball = {
     vy: 0,
     moving: false,
     onPlatform: false,
+    platform: null,
     platformCooldown: 0,
 };
-
 // ===== 操作 =====
 let angle = 0;
 let power = 8;
@@ -76,6 +76,11 @@ function update() {
             p.vx *= -1;
         }
     }
+    // 足場に乗っている間は一緒に動く
+if (ball.platform) {
+    ball.x += ball.platform.vx;
+    ball.y += ball.platform.vy || 0;
+}
 
     // ===== ボール移動 =====
     if (ball.moving) {
@@ -131,6 +136,7 @@ function update() {
 
     // ===== 動く床との当たり判定 =====
 ball.onPlatform = false;
+ball.platform = null;
 
 for (const p of movingPlatforms) {
 
@@ -175,8 +181,8 @@ for (const p of movingPlatforms) {
 
             ball.y = p.y - ball.r;
             ball.vy = 0;
-
             ball.onPlatform = true;
+            ball.platform = p;
             ball.moving = false;
 
             // 足場と一緒に移動
@@ -190,8 +196,8 @@ for (const p of movingPlatforms) {
 
             ball.y = p.y + p.h + ball.r;
             ball.vy = 0;
-
             ball.onPlatform = true;
+            ball.platform = p;
             ball.moving = false;
 
             // 足場と一緒に移動
