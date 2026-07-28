@@ -68,7 +68,6 @@ function update() {
     }
 
     // ===== 動く床を動かす =====
-    // ===== 動く床を動かす =====
 for (const p of movingPlatforms) {
 
     // 横移動
@@ -152,9 +151,8 @@ if (ball.platform) {
         }
     }
 
-    // ===== 動く床との当たり判定 =====
-ball.onPlatform = false;
-ball.platform = null;
+// ===== 動く床との当たり判定 =====
+let onPlatformNow = false;
 
 for (const p of movingPlatforms) {
 
@@ -199,31 +197,35 @@ for (const p of movingPlatforms) {
 
             ball.y = p.y - ball.r;
             ball.vy = 0;
+
             ball.onPlatform = true;
             ball.platform = p;
             ball.moving = false;
 
-            // 足場と一緒に移動
-            ball.x += p.vx;
-            if (p.vy) ball.y += p.vy;
+            onPlatformNow = true;
 
         }
 
-        // ===== 下からも乗る =====
+        // ===== 下から乗る =====
         else {
 
             ball.y = p.y + p.h + ball.r;
             ball.vy = 0;
+
             ball.onPlatform = true;
             ball.platform = p;
             ball.moving = false;
 
-            // 足場と一緒に移動
-            ball.x += p.vx;
-            if (p.vy) ball.y += p.vy;
+            onPlatformNow = true;
 
         }
     }
+}
+
+// 足場から離れたら解除
+if (!onPlatformNow) {
+    ball.onPlatform = false;
+    ball.platform = null;
 }    // ===== 止まったらカウントダウン =====
     if (
         ball.moving &&
